@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" type="image/x-icon" href="Vereinslogo_3D.jpg">
+    <title>Tischtennis Sengwarden</title>
+</head>
+
+<body>
+    <div class="scoreboard">
+        <div class="player">
+            <div class="headline" id="p1headline">
+                <h3 class="points">POINTS</h3>
+                <h3 class="service" id="p1service"></h3>
+                <h3 class="timeout" id="p1timeout"></h3>
+            </div>
+            <h3 class="score" id="p1points">0</h3>
+            <button class="score-btn" id="p1score-inc">+1</button>
+            <button class="timeout-btn" id="p1timeoutbtn">T</button>
+            <button class="score-btn" id="p1score-dec">-1</button>
+            <h3 class="sets" id="p1set">SETS</h3>
+            <h3 class="score" id="p1sets">0</h3>
+            <input type="button" class="service" id="p1chooseservice" value="Aufschlagwahl"
+                onclick="player1ChooseService(); HideServiceButton();"></input>
+        </div>
+        <div class="menu">
+            <h3 class="informations" id="information">INFO</h3>
+            <h3 class="informations" id="info"></h3>
+            <button class="reset-btn" id="all-reset">Reset All</button>
+            <button class="reset-btn" id="sets-reset">Reset Sets</button>
+            <button class="reset-btn" id="points-reset">Reset Points</button>
+            <button class="change-btn" id="change" onclick="swapDisplays();">↔</button>
+            <button class="confirm-btn" id="confirm" onclick="confirmScores();">Confirm</button>
+        </div>
+        <div class="player">
+            <div class="headline" id="p2headline">
+                <h3 class="points">POINTS</h3>
+                <h3 class="service" id="p2service"></h3>
+                <h3 class="timeout" id="p2timeout"></h3>
+            </div>
+            <h3 class="score" id="p2points">0</h3>
+            <button class="score-btn" id="p2score-inc">+1</button>
+            <button class="timeout-btn" id="p2timeoutbtn">T</button>
+            <button class="score-btn" id="p2score-dec">-1</button>
+            <h3 class="sets" id="p2set">SETS</h3>
+            <h3 class="score" id="p2sets">0</h3>
+            <input type="button" class="service" id="p2chooseservice" value="Aufschlagwahl"
+                onclick="player2ChooseService(); HideServiceButton();">
+
+        </div>
+    </div>
+    <script>
+        // Get elements
+        const p1ScoreIncBtn = document.getElementById('p1score-inc');
+        const p1ScoreDecBtn = document.getElementById('p1score-dec');
+        const p1Points = document.getElementById('p1points');
+        const p1PointsResetBtn = document.getElementById('p1points-reset');
+        const p1SetIncBtn = document.getElementById('p1set-inc');
+        const p1SetDecBtn = document.getElementById('p1set-dec');
+        const p1Sets = document.getElementById('p1sets');
+        const p1Service = document.getElementById('p1service');
+        const p1ChooseService = document.getElementById('p1chooseservice');
+        const p1TimeoutBtn = document.getElementById('p1timeoutbtn');
+        const p1Timeout = document.getElementById('p1timeout');
+        const p1SetsResetBtn = document.getElementById('p1sets-reset');
+
+        const p2ScoreIncBtn = document.getElementById('p2score-inc');
+        const p2ScoreDecBtn = document.getElementById('p2score-dec');
+        const p2Points = document.getElementById('p2points');
+        const p2PointsResetBtn = document.getElementById('p2points-reset');
+        const p2SetIncBtn = document.getElementById('p2set-inc');
+        const p2SetDecBtn = document.getElementById('p2set-dec');
+        const p2Sets = document.getElementById('p2sets');
+        const p2Service = document.getElementById('p2service');
+        const p2ChooseService = document.getElementById('p2chooseservice');
+        const p2TimeoutBtn = document.getElementById('p2timeoutbtn');
+        const p2Timeout = document.getElementById('p2timeout');
+        const p2SetsResetBtn = document.getElementById('p2sets-reset');
+
+        const infoBoth = document.getElementById('info');
+        const resetPointsBtn = document.getElementById('points-reset');
+        const resetSetsBtn = document.getElementById('sets-reset');
+        const confirmBtn = document.getElementById('confirm');
+        const changeBtn = document.getElementById('change');
+        const resetAllBtn = document.getElementById('all-reset');
+
+        // Set initial values
+        let p1PointsVal = 0;
+        let p1SetsVal = 0;
+        let p1ServiceVal = "";
+        let p1TimeoutVal = "";
+        let p2PointsVal = 0;
+        let p2SetsVal = 0;
+        let p2ServiceVal = "";
+        let p2TimeoutVal = "";
+        let infoVal = "";
+        let p1ChooseServeVal = 0;
+        let p2ChooseServeVal = 0;
+        let firsttime50 = 1;
+        let firsttime51 = 1;
+        let firsttime52 = 1;
+        let firsttime53 = 1;
+        let firsttime54 = 1;
+
+        //Aufschlagwahl-Anzeige, also welche Seite bekommt am Anfang den Aufschlag
+        function player1ChooseService() {
+            if (p1ChooseServeVal == 0 && p2ChooseServeVal == 0) {
+                p1ChooseServeVal++;
+                p1ServiceVal = "1. Aufschlag";
+                p1Service.innerText = p1ServiceVal;
+
+            }
+        }
+        function player2ChooseService() {
+            if (p1ChooseServeVal == 0 && p2ChooseServeVal == 0) {
+                p2ChooseServeVal++;
+                p2ServiceVal = "1. Aufschlag";
+                p2Service.innerText = p2ServiceVal;
+            }
+
+
+
+        }
+        //Aufschlagwahl-Buttons verstecken
+        function HideServiceButton() {
+
+            document.getElementById('p1chooseservice').style.visibility = 'hidden';
+            document.getElementById('p2chooseservice').style.visibility = 'hidden';
+            document.getElementById('p1score-inc').style.visibility = 'visible';
+            document.getElementById('p2score-inc').style.visibility = 'visible';
+            document.getElementById('p1score-dec').style.visibility = 'visible';
+            document.getElementById('p2score-dec').style.visibility = 'visible';
+            document.getElementById('p1timeoutbtn').style.visibility = 'visible';
+            document.getElementById('p2timeoutbtn').style.visibility = 'visible';
+        }
+
+        /*Player 1*/
+        // Update points and sets for player 1
+        function updatePlayer1Score(addPoints, addSets) {
+
+            p1PointsVal += addPoints;
+            p1Points.textContent = p1PointsVal;
+            information();
+
+        }
+
+        // Increase player 1's points
+        p1ScoreIncBtn.addEventListener('click', () => {
+            //Nach dem fünften Satz kann man nicht hochschalten.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                //Case 1
+                if (p1PointsVal < 10 && p2PointsVal < 10) {
+                    updatePlayer1Score(1, 0);
+                }
+                else {
+                    //Case 2
+                    if (p1PointsVal < 10 && p2PointsVal == 10 || p1PointsVal == 10 && p2PointsVal < 10) {
+                        updatePlayer1Score(1, 0);
+                    }
+                    else {
+                        //Case 3
+                        if ((p1PointsVal || p2PointsVal) == 10 && (p1PointsVal == p2PointsVal)) {
+                            updatePlayer1Score(1, 0);
+                        }
+                        else {
+                            //Case 4
+                            if (p1PointsVal == p2PointsVal) {
+                                updatePlayer1Score(1, 0);
+                            }
+                            else {
+                                //Case 5
+                                if ((p1PointsVal || p2PointsVal) >= 10 && ((p1PointsVal == p2PointsVal + 1) || p2PointsVal == p1PointsVal + 1)) {
+                                    updatePlayer1Score(1, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            serviceRule();
+        });
+        // Decrease player 1's points
+        p1ScoreDecBtn.addEventListener('click', () => {
+            const pointDiffu = Math.abs(p1PointsVal - p2PointsVal)
+            //Nach dem fünften Satz kann man nicht hochschalten.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                //Case1
+                if (!(p2PointsVal == 11) && p1PointsVal > 0 && p1PointsVal <= 9) {
+                    p1PointsVal--;
+                } else {
+                    if ((p1PointsVal == 9) && p2PointsVal == 9) {
+                        p1PointsVal--;
+                    }
+                    //Case2
+                    if (p2PointsVal >= 10 && p2PointsVal == p1PointsVal + 1 || p1PointsVal == 9 && p2PointsVal == 10) {
+                        p1PointsVal--;
+                    } else {
+                        //Case3
+
+                        if (p1PointsVal >= 10 && (p1PointsVal == p2PointsVal + 1 || (p1PointsVal == 10 && p2PointsVal == 9))) {
+                            p1PointsVal--;
+                        } else {
+                            //Case4
+                            if (p2PointsVal == 11 && p1PointsVal < 9) {
+                            } else {
+                                //Case5
+                                if (p1PointsVal == 10 && p1PointsVal == p2PointsVal) {
+                                    p1PointsVal--;
+                                } else {
+                                    //Case6
+                                    if (p1PointsVal == 10 && p1PointsVal == p2PointsVal - 1) {
+                                        p1PointsVal--;
+                                    } else {
+                                        //Case7
+                                        if (p1PointsVal > 10 && p1PointsVal >= p2PointsVal && (pointDiffu == 1 || pointDiffu == 0)) {
+                                            p1PointsVal--;
+                                        } else {
+                                            //Case8
+                                            if (p1PointsVal <= 11 && p1PointsVal > p2PointsVal && pointDiffu >= 2) {
+                                                p1PointsVal--;
+                                            }
+                                            else {
+                                                //Case9
+                                                if (p1PointsVal >= 12 && p1PointsVal > p2PointsVal && pointDiffu >= 2) {
+                                                    p1PointsVal--;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                p1Points.textContent = p1PointsVal;
+                serviceRule();
+                information();
+                //Timeout "T" wird bei Betätigung des Decrease-Button (auf Punktzahl 0) auf "" gesetzt.
+                if (((p1PointsVal == 0 && p2PointsVal == 0) || (p2PointsVal == 0 && p1PointsVal == 0)) && (p1TimeoutVal == "T" || p2TimeoutVal == "T")) {
+                    p1TimeoutVal = "";
+                    p2TimeoutVal = "";
+                    p1Timeout.textContent = p1TimeoutVal;
+                    p2Timeout.textContent = p2TimeoutVal;
+                }
+            }
+        });
+        /*// Increase player 1's sets
+        p1SetIncBtn.addEventListener('click', () => {
+            if((p1SetsVal <= 2 && p2SetsVal <= 2)){
+            p1SetsVal++;
+            p1Sets.textContent = p1SetsVal;
+        }}
+        );
+
+        // Decrease player 1's sets
+        p1SetDecBtn.addEventListener('click', () => {
+            if (p1SetsVal > 0 && (p1SetsVal <= 2 && p2SetsVal <= 3)) {
+                p1SetsVal--;
+                p1Sets.textContent = p1SetsVal;
+            }
+        });
+        */
+
+        //Timeout player 1
+        p1TimeoutBtn.addEventListener('click', () => {
+            //Vor dem ersten Punkt im Satz oder nach einem Satz kann man kein Timeout nehmen.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                if ((p1PointsVal >= 1) && (p2PointsVal >= 0) || (p1PointsVal >= 0) && (p2PointsVal >= 1)) {
+                    if (((p1PointsVal <= 10) && (p2PointsVal <= 9)) || ((p2PointsVal <= 10) && (p1PointsVal <= 9)) ||
+                        ((p1PointsVal >= 10) && (p1PointsVal - p2PointsVal == 1)) || ((p2PointsVal >= 10) && (p2PointsVal - p1PointsVal == 1)) ||
+                        ((p1PointsVal >= 10) && (p1PointsVal == p2PointsVal)) || ((p2PointsVal >= 10) && (p2PointsVal == p1PointsVal))) {
+
+                        if (p1TimeoutVal == "") {
+                            p1TimeoutVal = "T";
+                            p1Timeout.textContent = p1TimeoutVal;
+                        }
+                        else if (p1TimeoutVal == "T") {
+                            p1TimeoutVal = "";
+                            p1Timeout.textContent = p1TimeoutVal;
+
+                        }
+                        else { }
+                    }
+                }
+            }
+        }
+
+        );
+        /*Player 2*/
+
+        // Update points and sets for player 2
+        function updatePlayer2Score(addPoints, addSets) {
+            p2PointsVal += addPoints;
+            p2Points.textContent = p2PointsVal;
+            information();
+
+        }
+
+        // Increase player 2's points
+        p2ScoreIncBtn.addEventListener('click', () => {
+            //Nach dem fünften Satz kann man nicht hochschalten.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                //Case 1
+                if (p1PointsVal < 10 && p2PointsVal < 10) {
+                    updatePlayer2Score(1, 0);
+                }
+                else {
+                    //Case 2
+                    if (p1PointsVal < 10 && p2PointsVal == 10 || p1PointsVal == 10 && p2PointsVal < 10) {
+                        updatePlayer2Score(1, 0);
+                    }
+                    else {
+                        //Case 3
+                        if ((p1PointsVal || p2PointsVal) == 10 && (p1PointsVal == p2PointsVal)) {
+                            updatePlayer2Score(1, 0);
+                        }
+                        else {
+                            //Case 4
+                            if (p1PointsVal == p2PointsVal) {
+                                updatePlayer2Score(1, 0);
+                            }
+                            else {
+                                //Case 5
+                                if ((p1PointsVal || p2PointsVal) >= 10 && ((p1PointsVal == p2PointsVal + 1) || p2PointsVal == p1PointsVal + 1)) {
+                                    updatePlayer2Score(1, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            serviceRule();
+
+
+
+        });
+
+        // Decrease player 2's points
+        p2ScoreDecBtn.addEventListener('click', () => {
+            const pointDiff = Math.abs(p1PointsVal - p2PointsVal)
+            //Nach dem fünften Satz kann man nicht hochschalten.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                //Case1
+                if (!(p1PointsVal == 11) && p2PointsVal > 0 && p2PointsVal <= 9) {
+                    p2PointsVal--;
+                } else {
+                    if ((p1PointsVal == 9) && p2PointsVal == 9) {
+                        p2PointsVal--;
+                    }
+                    //Case2
+                    if (p1PointsVal >= 10 && p1PointsVal == p2PointsVal + 1 || p1PointsVal == 10 && p2PointsVal == 9) {
+                        p2PointsVal--;
+
+                    } else {
+                        //Case3
+                        if (p2PointsVal >= 10 && (p2PointsVal == p1PointsVal + 1 || (p1PointsVal == 9 && p2PointsVal == 10))) {
+                            p2PointsVal--;
+                        }
+                        else {
+                            //Case4
+                            if (p1PointsVal == 11 && p2PointsVal < 9) {
+                            } else {
+                                //Case5
+                                if (p2PointsVal == 10 && p2PointsVal == p1PointsVal) {
+                                    p2PointsVal--;
+                                } else {
+                                    //Case6
+                                    if (p2PointsVal == 10 && p2PointsVal == p1PointsVal - 1) {
+                                        p2PointsVal--;
+                                    } else {
+                                        //Case7
+                                        if (p2PointsVal > 10 && p2PointsVal >= p1PointsVal && (pointDiff == 1 || pointDiff == 0)) {
+                                            p2PointsVal--;
+                                        } else {
+                                            //Case8
+                                            if (p2PointsVal <= 11 && p2PointsVal > p1PointsVal && pointDiff >= 2) {
+                                                p2PointsVal--;
+                                            }
+                                            else {
+                                                //Case9
+                                                if (p2PointsVal >= 12 && p2PointsVal > p1PointsVal && pointDiff >= 2) {
+                                                    p2PointsVal--;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                p2Points.textContent = p2PointsVal;
+                serviceRule();
+                information();
+                //Timeout "T" wird bei Betätigung des Decrease-Button (auf Punktzahl 0) auf "" gesetzt.
+                if (((p1PointsVal == 0 && p2PointsVal == 0) || (p2PointsVal == 0 && p1PointsVal == 0)) && (p1TimeoutVal == "T" || p2TimeoutVal == "T")) {
+                    p1TimeoutVal = "";
+                    p2TimeoutVal = "";
+                    p1Timeout.textContent = p1TimeoutVal;
+                    p2Timeout.textContent = p2TimeoutVal;
+                }
+            }
+        });
+
+        /*// Increase player 2's sets
+        p2SetIncBtn.addEventListener('click', () => {
+            if ((p1SetsVal <= 2 && p2SetsVal <= 2)) {
+                p2SetsVal++;
+                p2Sets.textContent = p2SetsVal;
+            }
+        }
+        );
+
+        // Decrease player 2's sets
+        p2SetDecBtn.addEventListener('click', () => {
+            if (p2SetsVal > 0 && ((p1SetsVal <= 2 && p2SetsVal <= 3))) {
+                p2SetsVal--;
+                p2Sets.textContent = p2SetsVal;
+            }
+        });
+        */
+
+
+        //Timeout player 2
+        p2TimeoutBtn.addEventListener('click', () => {
+            //Nach dem fünften Satz kann man nicht Timeout nehmen.
+            if (!((p1SetsVal == 3 && p2SetsVal <= 2) || (p2SetsVal == 3 && p1SetsVal <= 2))) {
+                if ((p1PointsVal >= 1) && (p2PointsVal >= 0) || (p1PointsVal >= 0) && (p2PointsVal >= 1)) {
+                    if (((p1PointsVal <= 10) && (p2PointsVal <= 9)) || ((p2PointsVal <= 10) && (p1PointsVal <= 9)) ||
+                        ((p1PointsVal >= 10) && (p1PointsVal - p2PointsVal == 1)) || ((p2PointsVal >= 10) && (p2PointsVal - p1PointsVal == 1)) ||
+                        ((p1PointsVal >= 10) && (p1PointsVal == p2PointsVal)) || ((p2PointsVal >= 10) && (p2PointsVal == p1PointsVal))) {
+
+
+                        if (p2TimeoutVal == "") {
+                            p2TimeoutVal = "T";
+                            p2Timeout.textContent = p2TimeoutVal;
+                        }
+                        else if (p2TimeoutVal == "T") {
+                            p2TimeoutVal = "";
+                            p2Timeout.textContent = p2TimeoutVal;
+
+                        }
+                    }
+                }
+            }
+        }
+        );
+
+
+
+
+
+        function information() {
+
+
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal == 0) || (p2PointsVal == 5 && p1PointsVal == 0))) {
+                information();
+                firsttime50++;
+
+            }
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal == 1) || (p2PointsVal == 5 && p1PointsVal == 1))) {
+                information();
+                firsttime51++;
+
+            }
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal == 2) || (p2PointsVal == 5 && p1PointsVal == 2))) {
+                information();
+                firsttime52++;
+
+            }
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal == 3) || (p2PointsVal == 5 && p1PointsVal == 3))) {
+                information();
+                firsttime53++;
+
+            }
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal == 4) || (p2PointsVal == 5 && p1PointsVal == 4))) {
+                information();
+                firsttime54++;
+
+            }
+
+
+
+
+
+
+
+            if ((p1SetsVal == 2 && p2SetsVal == 2) && ((p1PointsVal == 5 && p2PointsVal <= 4) || (p2PointsVal == 5 && p1PointsVal <= 4))) {
+                if (firsttime50 == 1) {
+                    firsttime50++;
+                }
+                else {
+                    firstime50--;
+                }
+                if (firsttime51 == 1) {
+                    firsttime51++;
+                }
+                else { firstime51--; }
+
+                if (firsttime52 == 1) {
+                    firsttime52++;
+                }
+                else { firstime52--; }
+
+                if (firsttime53 == 1) {
+                    firsttime53++;
+                }
+                else { firstime53--; }
+
+                if (firsttime54 == 1) {
+                    firsttime54++;
+                }
+                else { firstime55--; }
+
+
+                switch (firsttime50) {
+                    case 1: //5:0
+                        infoVal = "Seitenwechsel bitte!";
+                        infoBoth.textContent = infoVal;
+                        firsttime5 = 2;
+                        break;
+                    case 2: //5:1
+                        infoVal = "";
+                        infoBoth.textContent = infoVal;
+                        firsttime5++;
+                        break;
+                    case 3://5:2
+                        infoVal = "";
+                        infoBoth.textContent = infoVal;
+                        firsttime5++;
+                        break;
+                    case 4://5:3
+                        infoVal = "";
+                        infoBoth.textContent = infoVal;
+                        firsttime5++;
+                        break;
+                    case 5://5:4
+                        infoVal = "";
+                        infoBoth.textContent = infoVal;
+                        firsttime5++;
+                        break;
+
+                }
+
+
+
+            }
+
+        }
+
+        //Aufschlagwechsel-Regel, also welcher Aufschlag ist das: 1? oder 2?
+        function serviceRule(sum) {
+
+
+            sum = (p1PointsVal + p2PointsVal);
+            switch (p1ChooseServeVal) {
+                case p1ChooseServeVal == 1:
+                    //Bei Punkten unter 10 zu 10 (da hat jeder ganz normal zwei Aufschläge)
+                    if ((p1PointsVal <= 10 && p2PointsVal < 10) || (p2PointsVal <= 10 && p1PointsVal < 10)) {
+
+                        if ((sum % 2 == 0) && (p1ServiceVal == "1. Aufschlag")) {
+                            p1ServiceVal = "2. Aufschlag";
+                            p2ServiceVal = "";
+                            p1Service.textContent = p1ServiceVal;
+                            p2Service.textContent = p2ServiceVal;
+                            break;
+                        }
+                        
+                        else if (sum % 2 == 1 && p1ServiceVal == "2. Aufschlag") {
+                            p1ServiceVal = "";
+                            p2ServiceVal = "1. Aufschlag";
+                            p1Service.textContent = p1ServiceVal;
+                            p2Service.textContent = p2ServiceVal;
+
+                        }
+
+
+
+
+                    }
+                    //Bei 11 zu <=9
+                    if ((p1PointsVal == 11 && p2PointsVal <= 9) || (p2PointsVal == 11 && p1PointsVal <= 9)) {
+
+                        if (p1ServiceVal == "1. Aufschlag") {
+                            if (sum % 2 == 0) {
+                                p1ServiceVal = "Kein Aufschlag";
+                                p2ServiceVal = "";
+
+                            }
+                            else if (sum % 2 == 1) {
+                                p1ServiceVal = "Kein Aufschlag";
+                                p2ServiceVal = "";
+                            }
+
+                        } else if (p1ServiceVal == "2. Aufschlag") {
+                            if (sum % 2 == 0) {
+                                p1ServiceVal = "";
+                                p2ServiceVal = "Kein Aufschlag";
+
+                            }
+                            else if (sum % 2 == 1) {
+                                p1ServiceVal = "";
+                                p2ServiceVal = "Kein Aufschlag";
+                            }
+
+                        }
+
+
+
+                    }
+                    //Bei 10 zu 10 oder drüber (da hat jeder im Wechsel nur einen Aufschlag)
+                    if ((p1PointsVal >= 10 && p2PointsVal >= 10)) {
+                        if (sum % 2 == 0) {
+                            p1ServiceVal = "1. Aufschlag";
+                            p2ServiceVal = "";
+
+                            if ((p1PointsVal - p2PointsVal == 2) || (p2PointsVal - p1PointsVal == 2)) {
+                                p1ServiceVal = "Kein Aufschlag";
+                                p2ServiceVal = "";
+                            }
+                        }
+                        else if (sum % 2 == 1) {
+                            p1ServiceVal = "1. Aufschlag";
+                            p2ServiceVal = "";
+                        }
+
+
+
+
+                    }
+                case p1ChooseServeVal == 0:
+
+
+
+
+
+
+
+            }
+        }
+
+        function serviceRuleChange() {
+            let tempService = p1ServiceVal;
+            p2ServiceVal = p1ServiceVal;
+            p2ServiceVal = tempService;
+            p1Service.innerHTML = p1ServiceVal;
+            p2Service.innerHTML = p2ServiceVal;
+
+
+        }
+
+
+
+
+
+
+        /*General javascript*/
+        //Für den Seitenwechsel im fünften Satz bei 5:...  
+        function swapDisplays() {
+
+            if (((p1PointsVal == 5 || p2PointsVal == 5) && (p1PointsVal <= 4 || p2PointsVal <= 4)) && (p1SetsVal == 2 && p2SetsVal == 2)) {
+
+                let tempPoints = p1PointsVal;
+                let tempSets = p1SetsVal;
+                let tempTimeout = p1TimeoutVal;
+
+                // Variablen setzen
+                p1PointsVal = p2PointsVal;
+                p1SetsVal = p2SetsVal;
+                p1TimeoutVal = p2TimeoutVal;
+
+                p2PointsVal = tempPoints;
+                p2SetsVal = tempSets;
+                p2TimeoutVal = tempTimeout;
+
+                // Text im html updaten
+                p1Points.innerHTML = p1PointsVal;
+                p1Sets.innerHTML = p1SetsVal;
+                p1Timeout.innerHTML = p1TimeoutVal;
+
+                p2Points.innerHTML = p2PointsVal;
+                p2Sets.innerHTML = p2SetsVal;
+                p2Timeout.innerHTML = p2TimeoutVal;
+
+            }
+        }
+        //Bestätigung für die Punktergebnisse und für den Seitenwechsel nach einem Satz 
+        function confirmScores() {
+            if (((p1PointsVal - p2PointsVal == 2 && p1PointsVal >= 12) || (p1PointsVal == 11 && p2PointsVal <= 9) || (p2PointsVal - p1PointsVal == 2 && p2PointsVal >= 12) || (p2PointsVal == 11 && p1PointsVal <= 9)) && ((p1SetsVal <= 2 && p2SetsVal <= 2))) {
+
+
+                //Satz wird bei Satzgewinn erhöht
+                if ((p1PointsVal - p2PointsVal == 2 && p1PointsVal >= 12) || (p1PointsVal == 11 && p2PointsVal <= 9)) {
+                    p1PointsVal = 0;
+                    p1Points.innerHTML = p1PointsVal;
+                    p2PointsVal = 0;
+                    p2Points.innerHTML = p2PointsVal;
+                    p1SetsVal++;
+                    serviceRule();
+
+                }
+
+                else {
+                    if ((p2PointsVal - p1PointsVal == 2 && p2PointsVal >= 12) || (p2PointsVal == 11 && p1PointsVal <= 9)) {
+                        p1PointsVal = 0;
+                        p1Points.innerHTML = p1PointsVal;
+                        p2PointsVal = 0;
+                        p2Points.innerHTML = p2PointsVal;
+                        p2SetsVal++;
+                        serviceRule();
+                    }
+                }
+                //Bedingung, falls es in den fünften Satz geht und nach dem fünften Satz nicht mehr die Anzeigen gewechselt werden sollen
+                if ((p1SetsVal <= 2 && p2SetsVal <= 2)) {
+                    //Wechsel der Scores
+                    let tempPoints = p1PointsVal;
+                    let tempSets = p1SetsVal;
+                    let tempService = p1ServiceVal;
+                    let tempTimeout = p1TimeoutVal;
+
+                    // Variablen setzen
+                    p1PointsVal = p2PointsVal;
+                    p1SetsVal = p2SetsVal;
+                    p1ServiceVal = p2ServiceVal;
+                    p1TimeoutVal = p2TimeoutVal;
+
+                    p2PointsVal = tempPoints;
+                    p2SetsVal = tempSets;
+                    p2ServiceVal = tempService;
+                    p2TimeoutVal = tempTimeout;
+
+                    // Text im html updaten
+                    p1Points.innerHTML = p1PointsVal;
+                    p1Sets.innerHTML = p1SetsVal;
+                    p1Service.innerHTML = p1ServiceVal;
+                    p1Timeout.innerHTML = p1TimeoutVal;
+
+                    p2Points.innerHTML = p2PointsVal;
+                    p2Sets.innerHTML = p2SetsVal;
+                    p2Service.innerHTML = p2PointsVal;
+                    p2Timeout.innerHTML = p2TimeoutVal;
+                }
+                else {
+
+                    // Text im html updaten
+                    p1Points.innerHTML = p1PointsVal;
+                    p1Sets.innerHTML = p1SetsVal;
+                    p1Service.innerHTML = p1ServiceVal;
+                    p1Timeout.innerHTML = p1TimeoutVal;
+
+
+                    p2Points.innerHTML = p2PointsVal;
+                    p2Sets.innerHTML = p2SetsVal;
+                    p2Service.innerHTML = p2PointsVal;
+                    p2Timeout.innerHTML = p2TimeoutVal;
+
+
+                }
+            }
+        }
+
+        // Reset points for both players
+        resetPointsBtn.addEventListener('click', () => {
+            p1PointsVal = 0;
+            p2PointsVal = 0;
+            p1ServiceVal = "";
+            p2ServiceVal = "";
+            p1Points.textContent = p1PointsVal;
+            p2Points.textContent = p2PointsVal;
+            p1Service.textContent = p1ServiceVal;
+            p2Service.textContent = p2ServiceVal;
+        });
+        // Reset sets for both players
+        resetSetsBtn.addEventListener('click', () => {
+            p1SetsVal = 0;
+            p2SetsVal = 0;
+            p1Sets.textContent = p1SetsVal;
+            p2Sets.textContent = p2SetsVal;
+        });
+        // Reset all values
+        resetAllBtn.addEventListener('click', () => {
+            p1PointsVal = 0;
+            p1SetsVal = 0;
+            p1ServiceVal = "";
+            p1ChooseServeVal = 0;
+            p1TimeoutVal = "";
+            p2PointsVal = 0;
+            p2SetsVal = 0;
+            p2ServiceVal = "";
+            p2ChooseServeVal = 0;
+            p2TimeoutVal = "";
+            //Aufschlagwahl-Buttons werden wieder angezeigt
+            document.getElementById('p1chooseservice').style.visibility = 'visible';
+            document.getElementById('p2chooseservice').style.visibility = 'visible';
+            //Punkte-, Satz- und Timeoutbuttons werden versteckt
+            document.getElementById('p1score-inc').style.visibility = 'hidden';
+            document.getElementById('p2score-inc').style.visibility = 'hidden';
+            document.getElementById('p1score-dec').style.visibility = 'hidden';
+            document.getElementById('p2score-dec').style.visibility = 'hidden';
+            document.getElementById('p1timeoutbtn').style.visibility = 'hidden';
+            document.getElementById('p2timeoutbtn').style.visibility = 'hidden';
+
+
+
+            p1Points.textContent = p1PointsVal;
+            p1Sets.textContent = p1SetsVal;
+            p1Service.textContent = p1ServiceVal;
+            p1Timeout.textContent = p1TimeoutVal;
+            p2Points.textContent = p2PointsVal;
+            p2Sets.textContent = p2SetsVal;
+            p2Service.textContent = p2ServiceVal;
+            p2Timeout.textContent = p2TimeoutVal;
+
+        });
+
+    </script>
+</body>
+
+</html>
